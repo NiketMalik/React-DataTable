@@ -53,7 +53,8 @@ TableHead.propTypes = {
   columns: PropTypes.arrayOf(
     PropTypes.exact({
       id: PropTypes.string.isRequired,
-      label: PropTypes.string.isRequired,
+      label: PropTypes.oneOfType([PropTypes.string, PropTypes.element])
+        .isRequired,
       numeric: PropTypes.bool,
       width: PropTypes.string,
     })
