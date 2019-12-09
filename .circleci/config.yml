@@ -19,7 +19,7 @@ jobs:
           paths:
             - ./node_modules
       - run:
-          name: "Run Jest and Collect Coverage Reports"
-          command: jest --collectCoverage=true
+          name: test
+          command: npm run test
       - store_artifacts:
           path: coverage
