@@ -1,6 +1,7 @@
-[![CircleCI](https://circleci.com/gh/NiketMalik/React-DataTable.svg?style=svg)](https://circleci.com/gh/NiketMalik/React-DataTable)
-
 # React DataTable
+
+[![code cov](https://codecov.io/gh/NiketMalik/React-DataTablea/branch/master/graph/badge.svg)](https://codecov.io/gh/NiketMalik/React-DataTablea)
+[![CircleCI](https://circleci.com/gh/NiketMalik/React-DataTable.svg?style=shield)](https://circleci.com/gh/NiketMalik/React-DataTable)
 
 ## DataTable
 
