@@ -109,24 +109,37 @@ describe("TableRow", () => {
         );
 
         const tr = container.find("tr");
-        const mockedEvent = { target: { checked: false } };
-        tr.at(0).simulate("click", mockedEvent);
+        tr.at(0).simulate("click");
         expect(mockCallBack).toHaveBeenCalledTimes(1);
     });
 
-    test("onSelectionChange", () => {
-        const mockCallBack = jest.fn();
-        const container = shallow(
-            <TableRow
-                config={rowConfig}
-                row={row}
-                onSelectionChange={mockCallBack}
-            />
-        );
+    describe("checkbox", () => {
+        test("onClick", () => {
+            const mockCallBack = jest.fn();
+            const container = shallow(
+                <TableRow config={rowConfig} row={row} />
+            );
 
-        const checkbox = container.find(".checkbox");
-        const mockedEvent = { target: { checked: false } };
-        checkbox.at(0).simulate("change", mockedEvent);
-        expect(mockCallBack).toHaveBeenCalledTimes(1);
+            const checkbox = container.find(".checkbox");
+            checkbox.at(0).simulate("click", {
+                stopPropagation: mockCallBack,
+            });
+            expect(mockCallBack).toHaveBeenCalledTimes(1);
+        });
+        test("onSelectionChange", () => {
+            const mockCallBack = jest.fn();
+            const container = shallow(
+                <TableRow
+                    config={rowConfig}
+                    row={row}
+                    onSelectionChange={mockCallBack}
+                />
+            );
+
+            const checkbox = container.find(".checkbox");
+            const mockedEvent = { target: { checked: false } };
+            checkbox.at(0).simulate("change", mockedEvent);
+            expect(mockCallBack).toHaveBeenCalledTimes(1);
+        });
     });
 });

@@ -170,46 +170,49 @@ describe("DataTable", () => {
     });
   });
 
-  test("onSelectionChange", () => {
-    const rows = generateRows(0);
-    const mockCallBack = jest.fn(x => x);
-    const container = mount(
-      <DataTable
-        config={{}}
-        columns={columns}
-        rows={rows}
-        visibleRows={50}
-        rowHeight={rowHeight}
-        onSelectionChange={mockCallBack}
-      />
-    );
+  describe("onSelectionChange", () => {
+    test("global", () => {
+      const rows = generateRows(0);
+      const mockCallBack = jest.fn(x => x);
+      const container = mount(
+        <DataTable
+          config={{}}
+          columns={columns}
+          rows={rows}
+          visibleRows={50}
+          rowHeight={rowHeight}
+          onSelectionChange={mockCallBack}
+        />
+      );
 
-    const checkbox = container.find(".table-head .table-head-column .checkbox");
-    const mockedEvent = { target: { checked: true } };
-    checkbox.simulate("change", mockedEvent);
-    expect(mockCallBack).toHaveBeenCalledTimes(1);
-    expect(mockCallBack.mock.results[0].value.length).toBe(rows.length);
-  });
+      const checkbox = container.find(
+        ".table-head .table-head-column .checkbox"
+      );
+      const mockedEvent = { target: { checked: true } };
+      checkbox.simulate("change", mockedEvent);
+      expect(mockCallBack).toHaveBeenCalledTimes(1);
+      expect(mockCallBack.mock.results[0].value.length).toBe(rows.length);
+    });
+    test("single", () => {
+      const rows = generateRows(0);
+      const mockCallBack = jest.fn(x => x);
+      const container = mount(
+        <DataTable
+          config={{}}
+          columns={columns}
+          rows={rows}
+          visibleRows={50}
+          rowHeight={rowHeight}
+          onSelectionChange={mockCallBack}
+        />
+      );
 
-  test("onRowClick", () => {
-    const rows = generateRows(0);
-    const mockCallBack = jest.fn(x => x);
-    const container = mount(
-      <DataTable
-        config={{}}
-        columns={columns}
-        rows={rows}
-        visibleRows={50}
-        rowHeight={rowHeight}
-        onRowClick={mockCallBack}
-        onSelectionChange={console.log}
-      />
-    );
-
-    const row = container.find(".table-row");
-    row.at(0).simulate("click");
-    expect(mockCallBack).toHaveBeenCalledTimes(1);
-    expect(mockCallBack.mock.results[0].value).toBe(rows[0]);
+      const checkbox = container.find(".table-row .checkbox");
+      const mockedEvent = { target: { checked: true } };
+      checkbox.at(0).simulate("change", mockedEvent);
+      expect(mockCallBack).toHaveBeenCalledTimes(1);
+      expect(mockCallBack.mock.results[0].value[0]).toBe(rows[0].id);
+    });
   });
 
   test("onRowClick", () => {
