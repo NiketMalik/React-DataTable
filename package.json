@@ -1,6 +1,7 @@
 {
   "name": "data-table",
   "version": "0.1.0",
+  "homepage": "https://niketmalik.github.io/React-DataTable",
   "private": true,
   "dependencies": {
     "node-sass": "^4.13.0",
