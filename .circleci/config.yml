@@ -20,4 +20,4 @@ jobs:
       - codecov/upload:
           file: coverage/*.json
       - store_test_results:
-          path: test-results
+          path: coverage
