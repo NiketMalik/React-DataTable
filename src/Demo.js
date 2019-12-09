@@ -1,6 +1,7 @@
 import React from "react";
 import DataTable from "components/DataTable/index";
 import "static/css/app.scss";
+import "static/css/datatable.scss";
 
 const pageSize = 50;
 const generateRows = (pageNumber = 0) => {

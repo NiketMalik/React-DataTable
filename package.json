@@ -34,11 +34,17 @@
     "@babel/preset-env": "^7.7.4",
     "@babel/preset-react": "^7.7.4",
     "babel-jest": "^24.9.0",
+    "enzyme": "^3.10.0",
+    "enzyme-adapter-react-16": "^1.15.1",
     "jest": "^24.9.0"
   },
   "jest": {
     "moduleNameMapper": {
-      "^components/(.*)": "<rootDir>/src/components/$1.js"
-    }
+      "^components/(.*)": "<rootDir>/src/components/$1.js",
+      "^static/css/(.*)": "<rootDir>/src/static/css/$1"
+    },
+    "setupFiles": [
+      "<rootDir>/src/tests/testSetup.js"
+    ]
   }
 }

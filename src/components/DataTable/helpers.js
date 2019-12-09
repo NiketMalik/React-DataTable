@@ -1,5 +1,11 @@
 import React from "react";
 
+/**
+ * TableRows data validator
+ * @param {!Array<?any>} propValue
+ * @param {string} propName
+ * @param {string} componentName
+ */
 function TableRowPropValidator(propValue, propName, componentName) {
   if (propValue[propName] instanceof Object === false) {
     throw new Error(
@@ -40,6 +46,12 @@ function TableRowPropValidator(propValue, propName, componentName) {
   });
 }
 
+/**
+ * Ensures that the prop is a a natural number.
+ * @param {!Array<?any>} props
+ * @param {string} propName
+ * @param {string} componentName
+ */
 function GreaterThanZeroPropValidator(props, propName, componentName) {
   if (
     Number(props[propName]) !== props[propName] ||

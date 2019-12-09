@@ -7,7 +7,6 @@ import {
   GreaterThanZeroPropValidator,
   TableRowPropValidator,
 } from "components/DataTable/helpers";
-import "static/css/datatable.scss";
 
 class DataTable extends React.Component {
   constructor(props) {

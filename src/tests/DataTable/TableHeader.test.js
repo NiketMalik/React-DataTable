@@ -1,19 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import TableHead from "components/DataTable/TableHead";
-import renderer from "react-test-renderer";
-import { act } from "react-dom/test-utils";
-
-let container;
-beforeEach(() => {
-    container = document.createElement("tbody");
-    document.body.appendChild(container);
-});
-
-afterEach(() => {
-    document.body.removeChild(container);
-    container = null;
-});
+import { shallow, mount } from "enzyme";
 
 const defaultColumns = [
     {
@@ -42,67 +30,133 @@ const tableHeadProps = {
 
 describe("TableHead", () => {
     test("Renders without crashing", () => {
-        const component = renderer.create(<TableHead {...tableHeadProps} />);
+        const func = () => {
+            const container = shallow(<TableHead {...tableHeadProps} />);
+        };
 
-        let tree = component.toJSON();
-        expect(tree).toMatchSnapshot();
+        expect(func).not.toThrow(TypeError);
     });
 
     test("isSticky", () => {
-        document.body.removeChild(container);
-        container = null;
-        container = document.createElement("div");
-        document.body.appendChild(container);
+        const container = mount(
+            <TableHead {...tableHeadProps} isSticky={true} />
+        );
 
-        act(() => {
-            ReactDOM.render(
-                <TableHead {...tableHeadProps} isSticky={true} />,
-                container
-            );
-        });
-
-        const tableHeadWrapper = container.querySelector(".table-head-sticky");
-        expect(tableHeadWrapper).not.toBeNull();
+        const tableHeadWrapper = container.find(".table-head-sticky");
+        expect(tableHeadWrapper.exists()).toBeTruthy();
     });
 
     test("numeric column", () => {
-        act(() => {
-            ReactDOM.render(
-                <TableHead
-                    {...{ ...tableHeadProps, columns: numericColumns }}
-                />,
-                container
-            );
-        });
+        const container = shallow(
+            <TableHead {...{ ...tableHeadProps, columns: numericColumns }} />
+        );
+        const TableHeadColumn = container.find(".table-head-column_is-numeric");
+        const TableHeadColumnsAll = container.find(
+            ".table-head-column_is-numeric"
+        );
 
-        const TableHeadColumn = container.querySelector(
-            ".table-head-column_is-numeric"
-        );
-        const TableHeadColumnsAll = container.querySelectorAll(
-            ".table-head-column_is-numeric"
-        );
-        expect(TableHeadColumn).not.toBeNull();
+        expect(TableHeadColumn.exists()).toBeTruthy();
         expect(TableHeadColumnsAll.length).toBe(2);
     });
 
     test("onSelectionChange", () => {
-        let selectionChange = false;
-        act(() => {
-            ReactDOM.render(
-                <TableHead
-                    {...tableHeadProps}
-                    onSelectionChange={checked => (selectionChange = checked)}
-                />,
-                container
+        const mockCallBack = jest.fn();
+        const container = shallow(
+            <TableHead {...tableHeadProps} onSelectionChange={mockCallBack} />
+        );
+
+        const checkbox = container.find(".checkbox");
+        const mockedEvent = { target: { checked: false } };
+        checkbox.at(0).simulate("change", mockedEvent);
+        expect(mockCallBack).toHaveBeenCalledTimes(1);
+    });
+
+    describe("options failure", () => {
+        describe("columns", () => {
+            test("overall", () => {
+                const func = () => {
+                    const container = shallow(
+                        <TableHead isSelectAll={false} isSticky={false} />
+                    );
+                };
+
+                expect(func).toThrowError(
+                    /The prop `columns` is marked as required in `TableHead`/
+                );
+            });
+
+            test("id", () => {
+                const func = () => {
+                    const container = shallow(
+                        <TableHead
+                            columns={[
+                                {
+                                    label: "Column 1",
+                                },
+                            ]}
+                            isSelectAll={false}
+                            isSticky={false}
+                        />
+                    );
+                };
+
+                expect(func).toThrowError(
+                    /The prop `columns\[0\].id` is marked as required in `TableHead`/
+                );
+            });
+
+            describe("label", () => {
+                test("missing value", () => {
+                    const func = () => {
+                        const container = shallow(
+                            <TableHead
+                                columns={[
+                                    {
+                                        id: "column_1",
+                                    },
+                                ]}
+                                isSelectAll={false}
+                                isSticky={false}
+                            />
+                        );
+                    };
+
+                    expect(func).toThrowError(
+                        /The prop `columns\[0\].label` is marked as required in `TableHead`/
+                    );
+                });
+
+                test("accepts string", () => {
+                    const func = () => {
+                        const container = shallow(
+                            <TableHead
+                                columns={[
+                                    {
+                                        id: "column_1",
+                                        label: <b>Column 1</b>,
+                                    },
+                                ]}
+                                isSelectAll={false}
+                                isSticky={false}
+                            />
+                        );
+                    };
+
+                    expect(func).not.toThrow(TypeError);
+                });
+            });
+        });
+
+        test("isSticky", () => {
+            const func = () => {
+                const container = shallow(
+                    <TableHead columns={defaultColumns} isSelectAll={false} />
+                );
+            };
+
+            expect(func).toThrowError(
+                /The prop `isSticky` is marked as required in `TableHead`/
             );
         });
-
-        const checkbox = container.querySelector(".checkbox");
-        expect(selectionChange).toBe(false);
-
-        act(() => {
-            checkbox.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-        });
-        expect(selectionChange).toBe(true);
     });
 });
