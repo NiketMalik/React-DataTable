@@ -12,8 +12,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "nyc jest",
-    "posttest": "nyc report --reporter=json"
+    "test": "jest"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -36,8 +35,7 @@
     "babel-jest": "^24.9.0",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.15.1",
-    "jest": "^24.9.0",
-    "nyc": "^14.1.1"
+    "jest": "^24.9.0"
   },
   "jest": {
     "collectCoverage": true,
