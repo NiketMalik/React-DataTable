@@ -46,7 +46,7 @@
       "^static/css/(.*)": "<rootDir>/src/static/css/$1"
     },
     "setupFiles": [
-      "<rootDir>/src/tests/testSetup.js"
+      "<rootDir>/tests/testSetup.js"
     ]
   }
 }
