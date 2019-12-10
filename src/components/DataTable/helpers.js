@@ -69,4 +69,23 @@ function GreaterThanZeroPropValidator(props, propName, componentName) {
   }
 }
 
-export { GreaterThanZeroPropValidator, TableRowPropValidator };
+/**
+ * Debounce event
+ * @param {Function} func
+ * @param {number} timeFrame
+ * @returns {Function}
+ */
+function debounce(func, timeFrame) {
+  var timeout;
+  return function() {
+    var context = this,
+      args = arguments;
+    clearTimeout(timeout);
+    timeout = setTimeout(function() {
+      timeout = null;
+      func.apply(context, args);
+    }, timeFrame);
+  };
+}
+
+export { GreaterThanZeroPropValidator, TableRowPropValidator, debounce };

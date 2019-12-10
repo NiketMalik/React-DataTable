@@ -10,11 +10,20 @@ export default class Demo extends React.Component {
     this.state = {
       isLoading: true,
       errorToast: false,
+      searchTerm: "",
       rows: [],
     };
   }
 
   componentDidMount() {
+    this._rowLoader();
+  }
+
+  /**
+   * Loads row
+   * @private
+   */
+  _rowLoader() {
     this.loadRows(0)
       .then(rows => {
         this.setState({ rows: rows });
@@ -61,8 +70,10 @@ export default class Demo extends React.Component {
    * @param {number} pageNumber
    */
   loadRows(pageNumber) {
+    const { searchTerm } = this.state;
     return fetch(
-      `https://jsonplaceholder.typicode.com/photos?_page=${pageNumber + 1}`
+      `https://jsonplaceholder.typicode.com/photos?_page=${pageNumber +
+        1}&q=${searchTerm}`
     )
       .then(res => res.json())
       .then(this.generateRows.bind(this));
@@ -74,33 +85,35 @@ export default class Demo extends React.Component {
       <div className="demo">
         <div className="loader" data-is-loading={isLoading} />
         <h1 className="header">Photo Album</h1>
-        {!isLoading && rows.length && (
-          <DataTable
-            onLoadMore={this.loadRows.bind(this)}
-            onRowClick={row => {
-              window.open(row.url, "_blank");
-              console.log(row);
-            }}
-            onSelectionChange={console.log}
-            config={{ stickyHeader: true }}
-            columns={[
-              {
-                id: "thumbnail",
-                label: "Thumbnail",
-                numeric: false,
-                width: "250px",
-              },
-              {
-                id: "title",
-                label: "Title",
-                numeric: false,
-              },
-            ]}
-            rows={rows}
-            rowHeight={200}
-            visibleRows={3}
-          />
-        )}
+
+        <DataTable
+          onLoadMore={this.loadRows.bind(this)}
+          onRowClick={row => {
+            window.open(row.url, "_blank");
+            console.log(row);
+          }}
+          onSelectionChange={console.log}
+          onSearch={searchTerm =>
+            this.setState({ searchTerm }, this._rowLoader)
+          }
+          config={{ stickyHeader: true }}
+          columns={[
+            {
+              id: "thumbnail",
+              label: "Thumbnail",
+              numeric: false,
+              width: "250px",
+            },
+            {
+              id: "title",
+              label: "Title",
+              numeric: false,
+            },
+          ]}
+          rows={rows}
+          rowHeight={200}
+          visibleRows={3}
+        />
       </div>
     );
   }

@@ -40,6 +40,10 @@
   },
   "jest": {
     "collectCoverage": true,
+    "coverageReporters": [
+      "default",
+      "html"
+    ],
     "moduleNameMapper": {
       "^components/(.*)": "<rootDir>/src/components/$1.js",
       "^static/css/(.*)": "<rootDir>/src/static/css/$1"

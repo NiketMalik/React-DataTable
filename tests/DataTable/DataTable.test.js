@@ -170,6 +170,68 @@ describe("DataTable", () => {
     });
   });
 
+  describe("onSearch", () => {
+    test("global", async () => {
+      const rows = generateRows(0);
+      const mockCallBack = jest.fn();
+      const container = mount(
+        <DataTable
+          config={{}}
+          columns={columns}
+          rows={rows}
+          visibleRows={50}
+          rowHeight={rowHeight}
+          onSearch={mockCallBack}
+        />
+      );
+
+      const searchInput = container.find(".data-table-search input");
+      const mockedEvent = { target: { value: "search-term" } };
+      expect(searchInput.exists()).toBeTruthy();
+      searchInput.simulate("change", mockedEvent);
+      await new Promise(resolve =>
+        setTimeout(() => {
+          expect(mockCallBack).toHaveBeenCalledTimes(1);
+          resolve();
+        }, 1000)
+      );
+    });
+
+    test("invalid type", async () => {
+      const rows = generateRows(0);
+      const func = () => {
+        const container = shallow(
+          <DataTable
+            config={{}}
+            columns={columns}
+            rows={rows}
+            visibleRows={50}
+            rowHeight={rowHeight}
+            onSearch={"wrong-value"}
+          />
+        );
+      };
+
+      expect(func).toThrowError(/Invalid prop `onSearch`/);
+    });
+
+    test("missing func does not render", async () => {
+      const rows = generateRows(0);
+      const container = mount(
+        <DataTable
+          config={{}}
+          columns={columns}
+          rows={rows}
+          visibleRows={50}
+          rowHeight={rowHeight}
+        />
+      );
+
+      const searchInput = container.find(".data-table-search input");
+      expect(searchInput.exists()).toBe(false);
+    });
+  });
+
   describe("onSelectionChange", () => {
     test("global", () => {
       const rows = generateRows(0);

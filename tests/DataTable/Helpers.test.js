@@ -1,7 +1,11 @@
+import assert from "assert";
 import {
   GreaterThanZeroPropValidator,
   TableRowPropValidator,
+  debounce,
 } from "components/DataTable/helpers";
+
+jest.useFakeTimers();
 
 describe("Helpers", () => {
   describe("TableRowPropValidator", () => {
@@ -116,5 +120,16 @@ describe("Helpers", () => {
         /Invalid prop `key` supplied to `DummyComponent`/
       );
     });
+  });
+  test("debounce", () => {
+    const func = jest.fn();
+    const debouncedFunc = debounce(func, 1000);
+
+    for (let i = 0; i < 100; i++) {
+      debouncedFunc();
+    }
+    jest.runAllTimers();
+
+    expect(func).toBeCalledTimes(1);
   });
 });

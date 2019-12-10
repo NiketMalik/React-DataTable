@@ -6,6 +6,7 @@ import TableRow from "components/DataTable/TableRow";
 import {
   GreaterThanZeroPropValidator,
   TableRowPropValidator,
+  debounce,
 } from "components/DataTable/helpers";
 
 class DataTable extends React.Component {
@@ -36,9 +37,7 @@ class DataTable extends React.Component {
         const tableOffsetHeight = tableEle.clientHeight;
         const tableBodyScrollHeight = tableBodyEle.scrollHeight;
 
-        this._throttle(this._handleRowVisibility.bind(this), 10)(
-          tableScrollTop
-        );
+        debounce(this._handleRowVisibility.bind(this), 10)(tableScrollTop);
 
         if (!this.state.isLoading) {
           if (tableBodyScrollHeight - tableOffsetHeight <= tableScrollTop) {
@@ -51,24 +50,18 @@ class DataTable extends React.Component {
     }
   }
 
-  /**
-   * Throttling event
-   * @param {Function} callback
-   * @param {number} limit
-   * @returns {Function}
-   * @private
-   */
-  _throttle(callback, limit) {
-    let wait = false;
-    return function() {
-      if (!wait) {
-        callback.apply(null, arguments);
-        wait = true;
-        setTimeout(function() {
-          wait = false;
-        }, limit);
-      }
-    };
+  componentDidUpdate(prevProps) {
+    const { rows, visibleRows } = this.props;
+
+    if (JSON.stringify(rows) !== JSON.stringify(prevProps.rows)) {
+      this.setState({
+        computedRows: rows.slice(0, visibleRows * 2),
+        isLoading: false,
+        rows: rows,
+        rowStartIndex: 0,
+        page: 0,
+      });
+    }
   }
 
   /**
@@ -97,6 +90,16 @@ class DataTable extends React.Component {
       computedRows: mutatedComputedRows,
       rowStartIndex: rowStartIndex,
     });
+  }
+
+  /**
+   * Handles search
+   * @param {?string} searchTerm
+   * @private
+   */
+  _onSearch(searchTerm = "") {
+    const { onSearch } = this.props;
+    debounce(onSearch, 1000)(searchTerm);
   }
 
   /**
@@ -196,6 +199,7 @@ class DataTable extends React.Component {
       columns,
       config,
       onRowClick,
+      onSearch,
       rowHeight,
       visibleRows,
     } = this.props;
@@ -233,52 +237,63 @@ class DataTable extends React.Component {
         className={`data-table ${className || ""}`}
         data-is-loading={isLoading}
       >
-        {isLoading && <div className="loader" />}
-        {isSticky && <TableHead {...tableHeadCommonProps} isSticky={true} />}
+        {onSearch && (
+          <div className="data-table-search">
+            <input
+              type="search"
+              onChange={e => this._onSearch(e.target.value)}
+              placeholder="Search"
+            />
+          </div>
+        )}
+        <div className="data-table-wrapper">
+          {isLoading && <div className="data-table-loader" />}
+          {isSticky && <TableHead {...tableHeadCommonProps} isSticky={true} />}
 
-        <table
-          ref={this.tableRef}
-          cellPadding="0"
-          cellSpacing="0"
-          style={{
-            height: `${tableHeight}px`,
-          }}
-        >
-          {!isSticky && (
-            <thead>
-              <TableHead {...tableHeadCommonProps} isSticky={false} />
-            </thead>
-          )}
-          <tbody
-            ref={this.tableBodyRef}
-            className="data-table-body"
-            style={{ height: `${rows.length * rowHeight}px` }}
+          <table
+            ref={this.tableRef}
+            cellPadding="0"
+            cellSpacing="0"
+            style={{
+              height: `${tableHeight}px`,
+            }}
           >
-            {rows.length === 0 && (
-              <tr className="table-row empty-rows">
-                <td className="table-row-item">No Data</td>
-              </tr>
+            {!isSticky && (
+              <thead>
+                <TableHead {...tableHeadCommonProps} isSticky={false} />
+              </thead>
             )}
-            {rows.length > 0 &&
-              computedRows.map((row, index) => (
-                <TableRow
-                  key={`DataTable_TableRow_${row.id}`}
-                  config={{
-                    ...rowConfig,
-                    rowStartIndex: (rowStartIndex + index) * rowHeight,
-                  }}
-                  row={row}
-                  onClick={column => onRowClick(row, rowStartIndex + index)}
-                  onSelectionChange={isSelected =>
-                    this._rowSelectionChangeHandler(
-                      rowStartIndex + index,
-                      isSelected
-                    )
-                  }
-                />
-              ))}
-          </tbody>
-        </table>
+            <tbody
+              ref={this.tableBodyRef}
+              className="data-table-body"
+              style={{ height: `${rows.length * rowHeight}px` }}
+            >
+              {rows.length === 0 && (
+                <tr className="table-row empty-rows">
+                  <td className="table-row-item">No Data</td>
+                </tr>
+              )}
+              {rows.length > 0 &&
+                computedRows.map((row, index) => (
+                  <TableRow
+                    key={`DataTable_TableRow_${row.id}`}
+                    config={{
+                      ...rowConfig,
+                      rowStartIndex: (rowStartIndex + index) * rowHeight,
+                    }}
+                    row={row}
+                    onClick={column => onRowClick(row, rowStartIndex + index)}
+                    onSelectionChange={isSelected =>
+                      this._rowSelectionChangeHandler(
+                        rowStartIndex + index,
+                        isSelected
+                      )
+                    }
+                  />
+                ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     );
   }
@@ -300,6 +315,7 @@ DataTable.propTypes = {
   ).isRequired,
   onLoadMore: PropTypes.func,
   onRowClick: PropTypes.func,
+  onSearch: PropTypes.func,
   onSelectionChange: PropTypes.func,
   rows: PropTypes.arrayOf(TableRowPropValidator).isRequired,
   rowHeight: GreaterThanZeroPropValidator,

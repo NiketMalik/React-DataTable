@@ -3,170 +3,202 @@
 .data-table {
     position: relative;
     display: block;
-    margin: 0 auto;
-    overflow: hidden;
-    border-radius: 6px;
-    background: #fff;
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
-        0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
 
-    .table-head {
+    .data-table-search {
+        position: relative;
         display: flex;
-        overflow: scroll;
-        white-space: nowrap;
+        margin-bottom: 25px;
 
-        .table-head-column {
-            padding: 18px 22px;
-            font-weight: 700;
-            line-height: 24px;
-            line-height: 2rem;
-            text-align: left;
-            text-overflow: ellipsis;
-            color: #757575;
-            border-bottom: 2px solid #e0e0e0;
+        justify-content: flex-end;
 
-            &_is-numeric {
-                text-align: right;
-            }
-        }
-    }
-
-    table {
-        position: relative;
-        display: block;
-        overflow: scroll;
-        font-size: 16px;
-        white-space: nowrap;
-
-        > tbody {
-            display: flex;
-            flex-direction: column;
-
-            .table-row {
-                position: absolute;
-                display: flex;
-                width: 100%;
-                align-items: center;
-
-                @include transition(
-                    background 0.28s cubic-bezier(0.4, 0, 0.2, 1)
-                );
-
-                &.empty-rows {
-                    .table-row-item {
-                        width: 100%;
-                        font-weight: 500;
-                        text-align: center;
-                        color: #777;
-                    }
-                }
-
-                > .table-row-item {
-                    position: relative;
-                    display: flex;
-                    height: 100%;
-                    padding: 18px 22px;
-                    align-items: center;
-                    cursor: pointer;
-                    text-align: left;
-                    border-bottom: 1px solid #e0e0e0;
-
-                    &_is-numeric {
-                        text-align: right;
-                    }
-                }
-
-                &:hover,
-                &.active {
-                    box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.14);
-                }
-            }
-        }
-    }
-
-    .checkbox {
-        position: relative;
-        margin: 0 1rem 0 0;
-        cursor: pointer;
-
-        &:before {
-            position: absolute;
-            top: -5px;
-            left: 0;
-            z-index: 2;
-            width: 18px;
-            height: 18px;
-            content: "";
-            border: 2px solid rgba(0, 0, 0, 0.54);
-
-            @include transition(all 0.1s ease-in-out);
-        }
-
-        &:checked {
-            &:before {
-                height: 10px;
-                border-color: #009688;
-                border-top-style: none;
-                border-right-style: none;
-
-                @include transform(rotate(-45deg));
-            }
-        }
-
-        &:after {
-            position: absolute;
-            top: -5px;
-            left: 0;
-            z-index: 1;
-            width: 18px;
-            height: 18px;
-            content: "";
-            cursor: pointer;
+        input {
+            width: 300px;
+            height: 40px;
+            max-width: 50%;
+            padding: 0 15px;
+            margin: 0;
+            font-size: 15px;
+            line-height: 36px;
+            border: none;
+            border-radius: 6px;
+            outline: none;
             background: #fff;
+            box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+                0 3px 1px -2px rgba(0, 0, 0, 0.2),
+                0 1px 5px 0 rgba(0, 0, 0, 0.12);
         }
     }
 
-    .loader {
-        position: absolute;
-        top: -1px;
-        left: -2px;
+    .data-table-wrapper {
+        position: relative;
         display: block;
-        width: calc(100% + 4px);
-        height: 5px;
-        background-image: linear-gradient(
-                to right,
-                rgba(255, 255, 255, 0.7),
-                rgba(255, 255, 255, 0.7)
-            ),
-            linear-gradient(to right, #3f51b5, #3f51b5);
+        margin: 0 auto;
+        overflow: hidden;
+        border-radius: 6px;
+        background: #fff;
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+            0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
 
-        &:after,
-        &:before {
+        .table-head {
+            display: flex;
+            overflow: scroll;
+            white-space: nowrap;
+
+            .table-head-column {
+                padding: 18px 22px;
+                font-weight: 700;
+                line-height: 24px;
+                line-height: 2rem;
+                text-align: left;
+                text-overflow: ellipsis;
+                color: #757575;
+                border-bottom: 2px solid #e0e0e0;
+
+                &_is-numeric {
+                    text-align: right;
+                }
+            }
+        }
+
+        table {
+            position: relative;
+            display: block;
+            overflow: scroll;
+            font-size: 16px;
+            white-space: nowrap;
+
+            > tbody {
+                display: flex;
+                flex-direction: column;
+
+                .table-row {
+                    position: absolute;
+                    display: flex;
+                    width: 100%;
+                    align-items: center;
+
+                    @include transition(
+                        background 0.28s cubic-bezier(0.4, 0, 0.2, 1)
+                    );
+
+                    &.empty-rows {
+                        .table-row-item {
+                            width: 100%;
+                            font-weight: 500;
+                            text-align: center;
+                            color: #777;
+
+                            justify-content: center;
+                        }
+                    }
+
+                    > .table-row-item {
+                        position: relative;
+                        display: flex;
+                        height: 100%;
+                        padding: 18px 22px;
+                        align-items: center;
+                        cursor: pointer;
+                        text-align: left;
+                        border-bottom: 1px solid #e0e0e0;
+
+                        &_is-numeric {
+                            text-align: right;
+                        }
+                    }
+
+                    &:hover,
+                    &.active {
+                        box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.14);
+                    }
+                }
+            }
+        }
+
+        .checkbox {
+            position: relative;
+            margin: 0 1rem 0 0;
+            cursor: pointer;
+
+            &:before {
+                position: absolute;
+                top: -5px;
+                left: 0;
+                z-index: 2;
+                width: 18px;
+                height: 18px;
+                content: "";
+                border: 2px solid rgba(0, 0, 0, 0.54);
+
+                @include transition(all 0.1s ease-in-out);
+            }
+
+            &:checked {
+                &:before {
+                    height: 10px;
+                    border-color: #009688;
+                    border-top-style: none;
+                    border-right-style: none;
+
+                    @include transform(rotate(-45deg));
+                }
+            }
+
+            &:after {
+                position: absolute;
+                top: -5px;
+                left: 0;
+                z-index: 1;
+                width: 18px;
+                height: 18px;
+                content: "";
+                cursor: pointer;
+                background: #fff;
+            }
+        }
+
+        .data-table-loader {
             position: absolute;
-            top: 0;
-            bottom: 0;
-            width: 0;
-            content: "";
-            animation-duration: 2s;
-            animation-timing-function: linear;
-            animation-iteration-count: infinite;
-            background-color: #3f51b5;
+            top: -1px;
+            left: -2px;
+            display: block;
+            width: calc(100% + 4px);
+            height: 5px;
+            background-image: linear-gradient(
+                    to right,
+                    rgba(255, 255, 255, 0.7),
+                    rgba(255, 255, 255, 0.7)
+                ),
+                linear-gradient(to right, #3f51b5, #3f51b5);
+
+            &:after,
+            &:before {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                width: 0;
+                content: "";
+                animation-duration: 2s;
+                animation-timing-function: linear;
+                animation-iteration-count: infinite;
+                background-color: #3f51b5;
+            }
+
+            &:before {
+                left: 0;
+                animation-name: data-table-loader-before;
+            }
+
+            &:after {
+                right: 0;
+                animation-name: data-table-loader-after;
+            }
         }
 
-        &:before {
-            left: 0;
-            animation-name: data-table-loader-before;
-        }
-
-        &:after {
-            right: 0;
-            animation-name: data-table-loader-after;
-        }
-    }
-
-    &[data-is-loading="false"] {
-        .loader {
-            display: none;
+        &[data-is-loading="false"] {
+            .data-table-loader {
+                display: none;
+            }
         }
     }
 }
