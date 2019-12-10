@@ -1,26 +1,29 @@
 version: 2.1
 orbs:
   codecov: codecov/codecov@1.0.4
-jobs:
-  build:
-    branches:
-      only:
-        - master
-    working_directory: ~/react-datatable
-    docker:
-      - image: circleci/node:10.0-browsers
-    steps:
-      - checkout
-      - run:
-          name: update-npm
-          command: "sudo npm install -g npm@latest"
-      - run:
-          name: install
-          command: npm install
-      - run:
-          name: test
-          command: npm run test
-      - codecov/upload:
-          file: coverage/*.json
-      - store_test_results:
-          path: coverage
+workflows:
+  version: 2
+  jobs:
+    - build:
+        filters:
+          branches:
+            only:
+              - master
+        working_directory: ~/react-datatable
+        docker:
+          - image: circleci/node:10.0-browsers
+        steps:
+          - checkout
+          - run:
+              name: update-npm
+              command: "sudo npm install -g npm@latest"
+          - run:
+              name: install
+              command: npm install
+          - run:
+              name: test
+              command: npm run test
+          - codecov/upload:
+              file: coverage/*.json
+          - store_test_results:
+              path: coverage
