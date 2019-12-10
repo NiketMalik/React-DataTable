@@ -3,62 +3,105 @@ import DataTable from "components/DataTable/index";
 import "static/css/app.scss";
 import "static/css/datatable.scss";
 
-const pageSize = 50;
-const generateRows = (pageNumber = 0) => {
-  const rows = [];
-  for (
-    let i = pageNumber * pageSize;
-    i < pageNumber * pageSize + pageSize;
-    i++
-  ) {
-    rows.push({
-      id: `id_${i}`,
-      description: "Loreum Ipsum",
-      product: <span>{`Product ${i + 1}`}</span>,
-      price: 15.2 + i,
-    });
+export default class Demo extends React.Component {
+  constructor() {
+    super();
+
+    this.state = {
+      isLoading: true,
+      errorToast: false,
+      rows: [],
+    };
   }
-  return rows;
-};
 
-const loadRows = (pageNumber = 0) => {
-  return new Promise(resolve => {
-    setTimeout(() => resolve(generateRows(pageNumber)), 2500);
-  });
-};
+  componentDidMount() {
+    this.loadRows(0)
+      .then(rows => {
+        this.setState({ rows: rows });
+      })
+      .catch(err => {
+        this.setState(
+          {
+            errorToast: "Something went wrong. Check console for more info.",
+          },
+          () => {
+            setTimeout(() => {
+              this.setState({
+                errorToast: false,
+              });
+            }, 2500);
+          }
+        );
+        console.error(err);
+      })
+      .finally(_ => this.setState({ isLoading: false }));
+  }
 
-export default () => {
-  return (
-    <div>
-      <h1 className="header">Data Table</h1>
-      <DataTable
-        onLoadMore={loadRows}
-        onRowClick={console.log}
-        onSelectionChange={console.log}
-        config={{ stickyHeader: true }}
-        columns={[
-          {
-            id: "product",
-            label: "Product",
-            numeric: false,
-            width: "160px",
-          },
-          {
-            id: "description",
-            label: "Description",
-            numeric: false,
-            width: "50%",
-          },
-          {
-            id: "price",
-            label: "Price",
-            numeric: true,
-          },
-        ]}
-        rows={generateRows(0)}
-        rowHeight={55}
-        visibleRows={10}
-      />
-    </div>
-  );
-};
+  /**
+   * Loads data from endpoint
+   * @param {!Array<?>} rows
+   */
+  generateRows(rows) {
+    return rows.map(row => ({
+      id: `album_${row.id}`,
+      thumbnail: (
+        <img
+          className="demo-thumbnail"
+          src={row.thumbnailUrl}
+          alt={row.title}
+        />
+      ),
+      title: <span className="demo-title">{row.title}</span>,
+      url: row.url,
+    }));
+  }
+
+  /**
+   * Loads data from endpoint
+   * @param {number} pageNumber
+   */
+  loadRows(pageNumber) {
+    return fetch(
+      `https://jsonplaceholder.typicode.com/photos?_page=${pageNumber + 1}`
+    )
+      .then(res => res.json())
+      .then(this.generateRows.bind(this));
+  }
+
+  render() {
+    const { isLoading, rows } = this.state;
+    return (
+      <div className="demo">
+        <div className="loader" data-is-loading={isLoading} />
+        <h1 className="header">Photo Album</h1>
+        {!isLoading && rows.length && (
+          <DataTable
+            onLoadMore={this.loadRows.bind(this)}
+            onRowClick={row => {
+              window.open(row.url, "_blank");
+              console.log(row);
+            }}
+            onSelectionChange={console.log}
+            config={{ stickyHeader: true }}
+            columns={[
+              {
+                id: "thumbnail",
+                label: "Thumbnail",
+                numeric: false,
+                width: "250px",
+              },
+              {
+                id: "title",
+                label: "Title",
+                numeric: false,
+              },
+            ]}
+            rows={rows}
+            rowHeight={200}
+            visibleRows={3}
+          />
+        )}
+      </div>
+    );
+  }
+}

@@ -108,7 +108,6 @@ class DataTable extends React.Component {
     const { page } = this.state;
 
     const nextPage = page + 1;
-
     onLoadMore(nextPage).then(nextRows => {
       this.setState(prevState => ({
         isLoading: false,
@@ -204,6 +203,7 @@ class DataTable extends React.Component {
 
     const isSticky = !!config.stickyHeader;
     const isSelectAll =
+      rows.length > 0 &&
       rows.filter(row => !!row.selected).length === rows.length;
     const rowConfig = {
       keys: [],
@@ -223,6 +223,11 @@ class DataTable extends React.Component {
       onSelectionChange: this._selectAllHandler.bind(this),
     };
 
+    let tableHeight = visibleRows * rowHeight;
+    if (rows.length === 0) {
+      tableHeight = 50;
+    }
+
     return (
       <div
         className={`data-table ${className || ""}`}
@@ -235,7 +240,9 @@ class DataTable extends React.Component {
           ref={this.tableRef}
           cellPadding="0"
           cellSpacing="0"
-          style={{ height: `${visibleRows * rowHeight}px` }}
+          style={{
+            height: `${tableHeight}px`,
+          }}
         >
           {!isSticky && (
             <thead>
@@ -247,23 +254,29 @@ class DataTable extends React.Component {
             className="data-table-body"
             style={{ height: `${rows.length * rowHeight}px` }}
           >
-            {computedRows.map((row, index) => (
-              <TableRow
-                key={`DataTable_TableRow_${row.id}`}
-                config={{
-                  ...rowConfig,
-                  rowStartIndex: (rowStartIndex + index) * rowHeight,
-                }}
-                row={row}
-                onClick={column => onRowClick(row, rowStartIndex + index)}
-                onSelectionChange={isSelected =>
-                  this._rowSelectionChangeHandler(
-                    rowStartIndex + index,
-                    isSelected
-                  )
-                }
-              />
-            ))}
+            {rows.length === 0 && (
+              <tr className="table-row empty-rows">
+                <td className="table-row-item">No Data</td>
+              </tr>
+            )}
+            {rows.length > 0 &&
+              computedRows.map((row, index) => (
+                <TableRow
+                  key={`DataTable_TableRow_${row.id}`}
+                  config={{
+                    ...rowConfig,
+                    rowStartIndex: (rowStartIndex + index) * rowHeight,
+                  }}
+                  row={row}
+                  onClick={column => onRowClick(row, rowStartIndex + index)}
+                  onSelectionChange={isSelected =>
+                    this._rowSelectionChangeHandler(
+                      rowStartIndex + index,
+                      isSelected
+                    )
+                  }
+                />
+              ))}
           </tbody>
         </table>
       </div>

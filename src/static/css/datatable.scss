@@ -51,9 +51,22 @@
                 @include transition(
                     background 0.28s cubic-bezier(0.4, 0, 0.2, 1)
                 );
+
+                &.empty-rows {
+                    .table-row-item {
+                        width: 100%;
+                        font-weight: 500;
+                        text-align: center;
+                        color: #777;
+                    }
+                }
+
                 > .table-row-item {
                     position: relative;
+                    display: flex;
+                    height: 100%;
                     padding: 18px 22px;
+                    align-items: center;
                     cursor: pointer;
                     text-align: left;
                     border-bottom: 1px solid #e0e0e0;
