@@ -30,8 +30,6 @@ workflows:
   test-and-build:
     jobs:
       - test-and-build:
-          requires:
-            - build
           filters:
             branches:
               only: master
